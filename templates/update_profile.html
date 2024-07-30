@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Page</title>
+    <title>Update Profile</title>
     <style>
         /* General Styles */
         body {
@@ -87,11 +88,12 @@
 <body>
     <div class="container">
         <header class="header">
-            <h1>Profile Page</h1>
+            <h1>Update Profile</h1>
             <nav class="navbar">
                 <a href="{% url 'chatPage' %}">Home</a>
                 <a href="{% url 'profile' %}">Profile</a>
-                <a href="{% url 'chatPage' %}">Logout</a>
+                <a href="{% url 'update_profile' %}">Update Profile</a>
+                <a href="{% url 'logoutuser' %}">Logout</a>
             </nav>
         </header>
         <main class="profile-main">
@@ -109,5 +111,6 @@
     </div>
 </body>
 </html>
+
 
 {% endblock %}

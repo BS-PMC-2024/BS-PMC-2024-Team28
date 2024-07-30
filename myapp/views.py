@@ -1,3 +1,6 @@
+import os
+
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 from django.shortcuts import render, redirect
@@ -5,14 +8,76 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
-from .forms import ContactusForm
+from .forms import ContactusForm,SignupForm,UserProfileForm
+
+from openai import OpenAI
+from dotenv import load_dotenv
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
+
 from django.db import IntegrityError
 
+from .models import UserProfile
+
+load_dotenv()
+API_KEY = 'sk-None-0ejjE5mfnMoSwR5utoBYT3BlbkFJD3x29ls1rCWodWXeRbfI'
 
 # Create your views here.
+@csrf_exempt
 def chatPage(request):
-    return render(request,'chatPage.html')
+    client = OpenAI()
+    messages = []
 
+    if request.method == 'POST':
+        user_message = request.POST.get('message')
+
+        if user_message:
+            # Add user's message to the messages list
+            messages.append({'sender': 'user', 'content': user_message})
+            response = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=messages
+            )
+            response_message = response.choices[0].message.content
+
+
+            # Prepare the data for the OpenAI API request
+            # headers = {
+            #     'Authorization': f'Bearer {API_KEY}',
+            #     'Content-Type': 'application/json',
+            # }
+            # data = {
+            #     'model': 'gpt-3.5-turbo',
+            #     'messages': [{'role': 'user', 'content': user_message}],
+            # }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            # Make the API request
+            # response = requests.post('https://api.openai.com/v1/chat/completions', headers=headers, json=data)
+            # api_response = response.json()
+            #
+            # # Extract the API's response
+            # if 'choices' in api_response and len(api_response['choices']) > 0:
+            #     api_message = api_response['choices'][0]['message']['content']
+            #     # Add API's response to the messages list
+            #     messages.append({'sender': 'api', 'content': api_message})
+
+    return render(request, 'chatPage.html', {'messages': messages})
 
 
 @login_required
@@ -27,27 +92,39 @@ def resetPassword(request):
 
 def signupuser(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = SignupForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('loginuser')  # Redirect to login page after signup
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password1'])
+            user.save()
+            login(request, user)
+            return redirect('chatPage')
     else:
-        form = UserCreationForm()
+        form = SignupForm()
+    return render(request, 'signupuser.html', {'form': form})
 
-    return render(request, 'loginuser.html', {'form': form})
-
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
+from .forms import LoginForm
 
 def loginuser(request):
     if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
+        form = LoginForm(request.POST)
         if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            return redirect('chatPage')  # Redirect to the chat page after login
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('chatPage')
+            else:
+                messages.error(request, 'Invalid username or password')
     else:
-        form = AuthenticationForm()
+        form = LoginForm()
 
     return render(request, 'loginuser.html', {'form': form})
+
 
 
 def contactus(request):
@@ -76,16 +153,26 @@ def base(request):
 
 @login_required
 def profile(request):
+    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
     if request.method == 'POST':
-        user = request.user
-        user.email = request.POST['email']
+        form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+    else:
+        form = UserProfileForm(instance=user_profile)
 
-        if 'profile_picture' in request.FILES:
-            user.profile.profile_picture = request.FILES['profile_picture']
+    return render(request, 'profile.html', {'form': form})
 
-        user.save()
-        from django.contrib import messages
-        messages.success(request, 'Your profile has been updated successfully.')
-        return redirect('profile')
+@login_required
+def update_profile(request):
+    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')  # Redirect to the profile page after saving
+    else:
+        form = UserProfileForm(instance=user_profile)
 
-    return render(request, 'profile.html', {'user': request.user})
+    return render(request, 'update_profile.html', {'form': form})

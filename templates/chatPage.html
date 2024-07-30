@@ -12,7 +12,7 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #000; /* Changed background color to match the style */
+      background-color: #000;
       margin: 0;
       display: flex;
       justify-content: center;
@@ -23,20 +23,20 @@
     .chat-container {
       width: 80%;
       max-width: 800px;
-      background-color: #222; /* Dark background color for chat container */
+      background-color: #222;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
       padding: 20px;
     }
 
     .chat-box {
-      height: 400px; /* Fixed height for chat box */
+      height: 400px;
       overflow-y: auto;
       padding: 10px;
       border: 1px solid #333;
       margin-bottom: 10px;
       border-radius: 5px;
-      background-color: #333; /* Dark background for chat box */
+      background-color: #333;
     }
 
     .chat-message {
@@ -47,13 +47,13 @@
     }
 
     .chat-message.user {
-      background-color: #0f0; /* Green background for user message */
+      background-color: #0f0;
       color: #000;
       align-self: flex-end;
     }
 
     .chat-message.api {
-      background-color: #f8d7da; /* Light red background for API message */
+      background-color: #f8d7da;
       color: #000;
       align-self: flex-start;
     }
@@ -75,7 +75,7 @@
 
     .input-group button {
       padding: 10px 20px;
-      background-color: #0f0; /* Green background for button */
+      background-color: #0f0;
       border: none;
       color: #000;
       border-radius: 0 5px 5px 0;
@@ -91,70 +91,17 @@
 
 <div class="chat-container">
   <div class="chat-box" id="chatBox">
-    <!-- Example User Message -->
-{#    <div class="chat-message user">Hi chat bot</div>#}
-    <!-- Example Chatbot Response -->
-    <div class="chat-message api">Hi, I'm a chatbot. How can I help you?</div>
+    {% for message in messages %}
+      <div class="chat-message {{ message.sender }}">{{ message.content }}</div>
+    {% endfor %}
   </div>
-  <div class="input-group">
-    <input type="text" id="chatInput" placeholder="Type a message...">
-    <button onclick="sendMessage()">Send</button>
-  </div>
+  <form method="POST" class="input-group">
+    {% csrf_token %}
+    <input type="text" name="message" id="chatInput" placeholder="Type a message...">
+    <button type="submit">Send</button>
+  </form>
 </div>
-
-<script>
-  async function sendMessageToAPI(message) {
-    const apiKey = 'sk-proj-2zw1OCBT7OebjdhSV1yvT3BlbkFJ2a4gp8LOMnSHiEvepquq'; // Your provided OpenAI API key
-    try {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
-        },
-        body: JSON.stringify({
-          model: 'gpt-3.5-turbo',
-          messages: [{ role: 'user', content: message }]
-        })
-      });
-
-      const data = await response.json();
-      if (data.choices && data.choices.length > 0) {
-        return data.choices[0].message.content;
-      } else {
-        console.error('Unexpected API response format:', data);
-        return 'Sorry, I did not understand that.';
-      }
-    } catch (error) {
-      console.error('Error while communicating with the API:', error);
-      return 'Sorry, an error occurred while processing your request.';
-    }
-  }
-
-  function appendMessage(message, sender) {
-    const chatBox = document.getElementById('chatBox');
-    const messageDiv = document.createElement('div');
-    messageDiv.className = 'chat-message ' + sender;
-    messageDiv.textContent = message;
-    chatBox.appendChild(messageDiv);
-    chatBox.scrollTop = chatBox.scrollHeight; // Auto scroll to bottom
-  }
-
-  async function sendMessage() {
-    const input = document.getElementById('chatInput');
-    const message = input.value.trim();
-    if (message) {
-      appendMessage(message, 'user');
-      input.value = '';
-
-      // Send message to ChatGPT API and get response
-      const response = await sendMessageToAPI(message);
-      appendMessage(response, 'api');
-    }
-  }
-</script>
 
 </body>
 </html>
-
 {% endblock %}
