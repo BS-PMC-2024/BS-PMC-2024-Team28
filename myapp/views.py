@@ -1,10 +1,17 @@
 import os
-
-from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserChangeForm, PasswordChangeForm
+from django.core.mail import EmailMessage
+from django.views.decorators.csrf import csrf_exempt
+import openai
+import os
+from dotenv import load_dotenv
+from django.http import JsonResponse
+from django.shortcuts import render
+from django.core.mail import send_mail
+from .forms import ContactusForm
 
-from django.shortcuts import render, redirect
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
@@ -19,65 +26,38 @@ from django.db import IntegrityError
 
 from .models import UserProfile
 
+# Load environment variables
 load_dotenv()
-API_KEY = 'sk-None-0ejjE5mfnMoSwR5utoBYT3BlbkFJD3x29ls1rCWodWXeRbfI'
 
-# Create your views here.
+# Initialize OpenAI client
+openai.api_key = os.getenv('OPENAI_API_KEY')
+
 @csrf_exempt
 def chatPage(request):
-    client = OpenAI()
     messages = []
 
     if request.method == 'POST':
         user_message = request.POST.get('message')
 
         if user_message:
-            # Add user's message to the messages list
             messages.append({'sender': 'user', 'content': user_message})
-            response = client.chat.completions.create(
+
+            response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
-                messages=messages
+                messages=[{"role": "user", "content": user_message}]
             )
-            response_message = response.choices[0].message.content
+            response_message = response.choices[0].message['content']
 
+            messages.append({'sender': 'api', 'content': response_message})
+            return JsonResponse({'response': response_message})
 
-            # Prepare the data for the OpenAI API request
-            # headers = {
-            #     'Authorization': f'Bearer {API_KEY}',
-            #     'Content-Type': 'application/json',
-            # }
-            # data = {
-            #     'model': 'gpt-3.5-turbo',
-            #     'messages': [{'role': 'user', 'content': user_message}],
-            # }
+    # Set default message for first visit
+    default_message = "Hi, how can I help you?"
+
+    return render(request, 'chatPage.html', {'messages': messages, 'default_message': default_message})
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            # Make the API request
-            # response = requests.post('https://api.openai.com/v1/chat/completions', headers=headers, json=data)
-            # api_response = response.json()
-            #
-            # # Extract the API's response
-            # if 'choices' in api_response and len(api_response['choices']) > 0:
-            #     api_message = api_response['choices'][0]['message']['content']
-            #     # Add API's response to the messages list
-            #     messages.append({'sender': 'api', 'content': api_message})
-
-    return render(request, 'chatPage.html', {'messages': messages})
 
 
 @login_required
@@ -128,23 +108,47 @@ def loginuser(request):
 
 
 def contactus(request):
-    if request.method == 'GET':
-        return render(request, 'contactus.html', {'form': ContactusForm()})
-    else:
-        form = ContactusForm(request.POST)
+    if request.method == 'POST':
+        form = ContactusForm(request.POST, request.FILES)  # Ensure request.FILES is included
         if form.is_valid():
-            form.save()
-            message = 'Message was sent successfully'
+            # Save the form data
+            contactus_instance = form.save()
+
+            # Prepare email data
+            subject = form.cleaned_data['subject']
+            message_body = form.cleaned_data['message']
+            from_email = form.cleaned_data['email']
             recipients = ['alobraessa2212@gmail.com']
-            subject = request.POST.get('subject', '')
-            message_body = request.POST.get('message', '')
-            from_email = request.POST.get('email', '')
-            send_mail(subject, message_body, from_email, recipients)
-            form = ContactusForm()  # Reset the form after saving
+
+            # Create the email
+            email = EmailMessage(subject, message_body, from_email, recipients)
+
+            # Attach image if available
+            if contactus_instance.image:
+                email.attach(contactus_instance.image.name, contactus_instance.image.read(), contactus_instance.image.content_type)
+
+            try:
+                # Send the email
+                email.send()
+                message = 'Message was sent successfully'
+                hasError = False
+            except Exception as e:
+                # Handle exceptions and log errors
+                message = f'Error sending message: {e}'
+                hasError = True
+
+            # Reset the form
+            form = ContactusForm()
         else:
             message = 'Please make sure all fields are valid'
+            hasError = True
+    else:
+        form = ContactusForm()
+        message = ''
+        hasError = False
 
-        return render(request, 'contactus.html', {'form': form, 'message': message})
+    return render(request, 'contactus.html', {'form': form, 'message': message, 'hasError': hasError})
+
 
 
 def base(request):
@@ -176,3 +180,45 @@ def update_profile(request):
         form = UserProfileForm(instance=user_profile)
 
     return render(request, 'update_profile.html', {'form': form})
+
+
+
+@login_required
+def user_settings(request):
+    if request.method == 'POST':
+        user_form = UserChangeForm(instance=request.user, data=request.POST)
+        password_form = PasswordChangeForm(user=request.user, data=request.POST)
+
+        if user_form.is_valid() and password_form.is_valid():
+            user_form.save()
+            password_form.save()
+            update_session_auth_hash(request, password_form.user)  # Important to keep the user logged in
+            return redirect('user_settings')  # Redirect to the same page to show success
+
+    else:
+        user_form = UserChangeForm(instance=request.user)
+        password_form = PasswordChangeForm(user=request.user)
+
+    return render(request, 'user_settings.html', {
+        'user_form': user_form,
+        'password_form': password_form
+    })
+
+from .models import CommunityMessage
+from .forms import CommunityMessageForm
+
+
+@login_required
+def community_chat(request):
+    if request.method == 'POST':
+        form = CommunityMessageForm(request.POST, request.FILES)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.user = request.user
+            message.save()
+            return redirect('community_chat')  # Redirect to avoid resubmission on refresh
+    else:
+        form = CommunityMessageForm()
+
+    messages = CommunityMessage.objects.all()
+    return render(request, 'community_chat.html', {'form': form, 'messages': messages})

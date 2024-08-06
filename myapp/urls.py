@@ -13,6 +13,8 @@ urlpatterns = [
  path('login/', views.loginuser, name='loginuser'),
  path('logout/', views.logoutuser, name='logoutuser'),
  path('profile/', views.profile, name='profile'),
+ path('settings/', views.user_settings, name='user_settings'),
+               path('community/', views.community_chat, name='community_chat'),
 
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+              ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

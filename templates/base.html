@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Bootstrap Example</title>
+  <title>ConversAI</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -100,39 +101,48 @@
       margin-top: 10px;
       margin-right: 15px;
     }
+
+    .navbar-profile-pic {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+    }
+
+    .fa-cog {
+      color: #fff; /* Set the color of the settings icon to white */
+    }
   </style>
 </head>
 <body>
 
 <nav class="navbar navbar-inverse navbar-fixed-top">
   <div class="container-fluid">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-      </button>
-
-      <a class="navbar-brand" href="{% url 'chatPage' %}">ConversAI</a>
-      <div class="collapse navbar-collapse" id="myNavbar">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="{% url 'chatPage' %}">ConversAI</a>
+    <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
         {% if user.is_authenticated %}
-        <li class="dropdown">
-          <a class="dropdown-toggle" data-toggle="dropdown" href="#">History <span class="caret"></span></a>
-          <ul class="dropdown-menu">
-            <li><a href="#">Empty</a></li>
-          </ul>
-        </li>
+        <li><a href="{% url 'community_chat' %}" class="btn btn-primary">Community</a></li>
         {% endif %}
       </ul>
       <ul class="nav navbar-nav navbar-right">
         {% if user.is_authenticated %}
-        <li><a href="{% url 'profile' %}" class="btn btn-nav"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
-        <li><a href="{% url 'logoutuser' %}" class="btn btn-nav"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+        <li>
+          <a href="{% url 'profile' %}" class="btn btn-nav">
+            <img src="{{ user.userprofile.profile_picture.url }}" class="navbar-profile-pic" alt="Profile Picture">
+          </a>
+        </li>
+        <li><a href="{% url 'contactus' %}" class="btn btn-nav"><span class="glyphicon glyphicon-envelope"></span> Contact Us</a></li>
+        <li><a href="{% url 'logoutuser' %}" class="btn btn-nav"><span class="glyphicon glyphicon-log-out"></span></a></li>
+        <li><a href="{% url 'user_settings' %}" class="btn btn-nav"><i class="fa fa-cog" aria-hidden="true"></i></a></li>
         {% else %}
         <li><a href="{% url 'contactus' %}" class="btn btn-nav"><span class="glyphicon glyphicon-envelope"></span> Contact Us</a></li>
         <li><a href="{% url 'signupuser' %}" class="btn btn-nav"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
         <li><a href="{% url 'loginuser' %}" class="btn btn-nav"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-                   <li><a href="{% url 'profile' %}" class="btn btn-nav"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
         {% endif %}
       </ul>
     </div>

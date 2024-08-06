@@ -46,8 +46,25 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # def save_user_profile(sender, instance, **kwargs):
 #     instance.profile.save()
 #
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'alobraessa2212@gmail.com'
+EMAIL_HOST_PASSWORD = '123'
 
-
+CHAT_API_KEY = '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'
+TEMPLATES = [
+    {
+        # ...
+        'OPTIONS': {
+            'context_processors': [
+                # ...
+                'myapp.context_processors.api_key',
+            ],
+        },
+    },
+]
 ##############################################
 
 # Application definition
@@ -144,7 +161,10 @@ USE_L10N = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATICFILES_DIRS=[
+    os.path.join(BASE_DIR,'static')
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

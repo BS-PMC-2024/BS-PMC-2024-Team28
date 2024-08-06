@@ -91,16 +91,64 @@
 
 <div class="chat-container">
   <div class="chat-box" id="chatBox">
+    {% if default_message %}
+      <div class="chat-message api">{{ default_message }}</div>
+    {% endif %}
     {% for message in messages %}
       <div class="chat-message {{ message.sender }}">{{ message.content }}</div>
     {% endfor %}
   </div>
-  <form method="POST" class="input-group">
+  <form id="chatForm" method="POST" class="input-group">
     {% csrf_token %}
     <input type="text" name="message" id="chatInput" placeholder="Type a message...">
     <button type="submit">Send</button>
   </form>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const chatBox = document.getElementById('chatBox');
+    chatBox.scrollTop = chatBox.scrollHeight;
+  });
+
+  document.getElementById('chatForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const inputField = document.getElementById('chatInput');
+    const message = inputField.value.trim();
+
+    if (message) {
+      const chatBox = document.getElementById('chatBox');
+      const userMessageDiv = document.createElement('div');
+      userMessageDiv.className = 'chat-message user';
+      userMessageDiv.textContent = message;
+      chatBox.appendChild(userMessageDiv);
+
+      inputField.value = '';
+
+      fetch('{% url 'chatPage' %}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: new URLSearchParams({
+          'message': message
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        setTimeout(() => {
+          const apiMessageDiv = document.createElement('div');
+          apiMessageDiv.className = 'chat-message api';
+          apiMessageDiv.textContent = data.response;
+          chatBox.appendChild(apiMessageDiv);
+          chatBox.scrollTop = chatBox.scrollHeight;
+        }, 1000); // 1 second delay
+      });
+    }
+  });
+</script>
 
 </body>
 </html>

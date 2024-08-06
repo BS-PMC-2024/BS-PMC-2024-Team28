@@ -3,17 +3,24 @@ from django import forms
 from django.forms import ModelForm
 from django.contrib.auth.models import AbstractBaseUser,User
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserChangeForm, PasswordChangeForm
 
 
 from myapp.models import Contactus, UserProfile
 
+from .models import CommunityMessage
+
+from django import forms
+from .models import CommunityMessage
 
 
 class ContactusForm(forms.ModelForm):
     class Meta:
         model = Contactus
-        fields = ['name', 'email', 'subject', 'message']
-
+        fields = ['name', 'email', 'subject', 'message', 'image']
+        widgets = {
+            'message': forms.Textarea(attrs={'rows': 4}),
+        }
 
 
 

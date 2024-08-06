@@ -5,53 +5,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Page</title>
+    <title>User Settings</title>
     <style>
-        /* General Styles */
         body {
-            margin: 0;
-            padding: 0;
             font-family: Arial, sans-serif;
             color: #fff;
             background-color: #121212;
         }
-
         .container {
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
-
         .header {
             background-color: #1f1f1f;
             padding: 20px;
             text-align: center;
             border-bottom: 2px solid #444;
         }
-
         .header h1 {
             margin: 0;
             color: #fff;
             font-size: 2em;
             font-weight: bold;
         }
-
-        .navbar {
-            margin-top: 10px;
-        }
-
-        .navbar a {
-            color: #bbb;
-            text-decoration: none;
-            margin: 0 15px;
-            font-weight: bold;
-            transition: color 0.3s;
-        }
-
-        .navbar a:hover {
-            color: #fff;
-        }
-
         .profile-main {
             flex: 1;
             display: flex;
@@ -59,8 +36,7 @@
             align-items: center;
             padding: 20px;
         }
-
-        .profile-card {
+        .settings-card {
             background-color: #1f1f1f;
             border-radius: 10px;
             padding: 20px;
@@ -69,31 +45,26 @@
             text-align: center;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
         }
-
-        .profile-pic {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            margin-bottom: 20px;
-            border: 4px solid #444;
+        .settings-card form {
+            text-align: left;
         }
-
-        .profile-info {
-            margin-bottom: 20px;
+        .settings-card .form-group {
+            margin-bottom: 15px;
         }
-
-        .profile-info h2 {
-            margin: 0;
-            font-size: 1.5em;
-            font-weight: bold;
-        }
-
-        .profile-info p {
-            margin: 5px 0;
+        .settings-card .form-group label {
+            display: block;
+            margin-bottom: 5px;
             color: #bbb;
         }
-
-        .profile-actions .btn {
+        .settings-card .form-group input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #444;
+            background-color: #222;
+            color: #fff;
+        }
+        .settings-card .btn {
             background-color: #007bff;
             color: #fff;
             padding: 10px 20px;
@@ -104,11 +75,9 @@
             cursor: pointer;
             font-size: 1em;
         }
-
-        .profile-actions .btn:hover {
+        .settings-card .btn:hover {
             background-color: #0056b3;
         }
-
         .footer {
             background-color: #1f1f1f;
             padding: 10px;
@@ -121,21 +90,34 @@
 <body>
     <div class="container">
         <header class="header">
-            <h1>Profile Page</h1>
+            <h1>User Settings</h1>
         </header>
         <main class="profile-main">
-            <div class="profile-card">
-                <img src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture" class="profile-pic">
-                <div class="profile-info">
-                    <h2>{{ user.username }}</h2>
-                    <p>{{ user.email }}</p>
-                </div>
-                <form method="post" enctype="multipart/form-data">
+            <div class="settings-card">
+                <form method="post">
                     {% csrf_token %}
-                    {{ form.as_p }}
-                    <div class="profile-actions">
-                        <button type="submit" class="btn">Save Changes</button>
+                    <h2>Change Your Details</h2>
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        {{ user_form.username }}
                     </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        {{ user_form.email }}
+                    </div>
+                    <div class="form-group">
+                        <label for="old_password">Old Password</label>
+                        {{ password_form.old_password }}
+                    </div>
+                    <div class="form-group">
+                        <label for="new_password1">New Password</label>
+                        {{ password_form.new_password1 }}
+                    </div>
+                    <div class="form-group">
+                        <label for="new_password2">Confirm New Password</label>
+                        {{ password_form.new_password2 }}
+                    </div>
+                    <button type="submit" class="btn">Save Changes</button>
                 </form>
             </div>
         </main>

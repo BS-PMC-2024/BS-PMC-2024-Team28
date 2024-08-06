@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-
 {% block content %}
 <div class="header-top-content">
   <div>
@@ -13,7 +12,7 @@
 
 <div class="row">
   <div class="col-md-12 mb-md-0 mb-5">
-    <form id="contact-form" name="contact-form" method="POST">
+    <form id="contact-form" name="contact-form" method="POST" enctype="multipart/form-data">
       {% csrf_token %}
       <div class="row">
         <div class="col-md-6">
@@ -51,13 +50,16 @@
         <div class="col-md-12">
           <div class="md-form mb-0">
             <label for="subject" class="">Subject</label>
-            <input
-              type="text"
+            <select
               id="subject"
               name="subject"
               class="form-control"
-              value="{{ form.subject.value|default_if_none:'' }}"
-            />
+            >
+              <option value="">Choose an option</option>
+              <option value="Code inefficiency">Code inefficiency</option>
+              <option value="Performance improvement suggestions">Performance improvement suggestions</option>
+              <option value="Other">Other</option>
+            </select>
             {% if form.errors.subject %}
             <p class="text-danger">{{ form.errors.subject }}</p>
             {% endif %}
@@ -80,18 +82,31 @@
           </div>
         </div>
       </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="md-form">
+            <label for="image">Attach Image</label>
+            <input
+              type="file"
+              id="image"
+              name="image"
+              class="form-control"
+            />
+            {% if form.errors.image %}
+            <p class="text-danger">{{ form.errors.image }}</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="text-center text-md-left mt-3">
+        <button class="btn btn-primary" type="submit">Send</button>
+      </div>
     </form>
-    <div class="text-center text-md-left mt-3">
-      <button class="btn btn-primary" onclick="document.getElementById('contact-form').submit();">
-        Send
-      </button>
-    </div>
     {% if message %}
     <div class="alert {% if hasError %}alert-danger{% else %}alert-success{% endif %} mt-3">
       {{ message }}
     </div>
     {% endif %}
-    <div class="status"></div>
   </div>
 </div>
 {% endblock %}
