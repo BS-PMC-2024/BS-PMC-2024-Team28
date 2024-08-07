@@ -1,7 +1,48 @@
 from django.urls import reverse
 from django.test import TestCase, Client
+
+from django.test import TestCase
 from django.contrib.auth.models import User
-from .models import  Contactus
+from .models import CommunityMessage, Contactus, UserProfile
+
+class CommunityMessageModelTest(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', password='12345')
+
+    def test_create_community_message(self):
+        message = CommunityMessage.objects.create(
+            user=self.user,
+            content="This is a test message"
+        )
+        self.assertEqual(message.user.username, 'testuser')
+        self.assertEqual(message.content, "This is a test message")
+        self.assertIsNone(message.image)
+
+class ContactusModelTest(TestCase):
+
+    def test_create_contactus(self):
+        contactus = Contactus.objects.create(
+            name="John Doe",
+            email="john@example.com",
+            subject="Test Subject",
+            message="This is a test message"
+        )
+        self.assertEqual(contactus.name, "John Doe")
+        self.assertEqual(contactus.email, "john@example.com")
+        self.assertEqual(contactus.subject, "Test Subject")
+        self.assertEqual(contactus.message, "This is a test message")
+        self.assertIsNone(contactus.image)
+
+class UserProfileModelTest(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', password='12345')
+
+    def test_user_profile_creation(self):
+        self.assertIsInstance(self.user.userprofile, UserProfile)
+        self.assertEqual(self.user.userprofile.user.username,'testuser')
+
 
 class CommunityChatViewTest(TestCase):
 
