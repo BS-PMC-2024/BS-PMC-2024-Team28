@@ -3,60 +3,51 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserChangeForm, PasswordChangeForm
 from django.core.mail import EmailMessage
-from django.views.decorators.csrf import csrf_exempt
-import openai
-import os
-from dotenv import load_dotenv
-from django.http import JsonResponse
-from django.shortcuts import render
-from django.core.mail import send_mail
-from .forms import ContactusForm
 
 from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.models import User
-from django.core.mail import send_mail
+from openai import OpenAIError
+
 from .forms import ContactusForm,SignupForm,UserProfileForm
-
-from openai import OpenAI
-from dotenv import load_dotenv
-from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
-
-from django.db import IntegrityError
 
 from .models import UserProfile
 
-# Load environment variables
-load_dotenv()
+import os
+import openai
+from dotenv import load_dotenv
+openai.api_key = os.getenv('sk-obSYJt7VRBNHBdKAfbgVRGYArY_m0AvloCcA2JfVBlT3BlbkFJaiMtlJi-aSit6lf3fJlztoDB4Gmhiauy6Hjbk2KRoA')
 
-# Initialize OpenAI client
-openai.api_key = os.getenv('OPENAI_API_KEY')
+import openai
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.utils import timezone
+from .models import Chat
+#
+# def ask_openai(message):
+#     openai.api_key = 'sk-obSYJt7VRBNHBdKAfbgVRGYArY_m0AvloCcA2JfVBlT3BlbkFJaiMtlJi-aSit6lf3fJlztoDB4Gmhiauy6Hjbk2KRoA'
+#     response = openai.ChatCompletion.create(
+#         model="gpt-3.5",
+#         messages=[
+#             {"role": "system", "content": "You are a helpful assistant."},
+#             {"role": "user", "content": message},
+#         ]
+#     )
+# #     answer = response.choices[0].message['content'].strip()
+#     return answer
 
-@csrf_exempt
+@login_required
 def chatPage(request):
-    messages = []
+    # chats = Chat.objects.filter(user=request.user)
+    #
+    # if request.method == 'POST':
+    #     message = request.POST.get('message')
+    #     response = ask_openai(message)
+    #
+    #     chat = Chat(user=request.user, message=message, response=response, created_at=timezone.now())
+    #     chat.save()
+    #     return JsonResponse({'message': message, 'response': response})
 
-    if request.method == 'POST':
-        user_message = request.POST.get('message')
-
-        if user_message:
-            messages.append({'sender': 'user', 'content': user_message})
-
-            response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=[{"role": "user", "content": user_message}]
-            )
-            response_message = response.choices[0].message['content']
-
-            messages.append({'sender': 'api', 'content': response_message})
-            return JsonResponse({'response': response_message})
-
-    # Set default message for first visit
-    default_message = "Hi, how can I help you?"
-
-    return render(request, 'chatPage.html', {'messages': messages, 'default_message': default_message})
-
-
+    # return render(request, 'chatPage.html', {'chats': chats})
+    return render(request, 'chatPage.html', )
 
 
 
@@ -157,14 +148,12 @@ def base(request):
 
 @login_required
 def profile(request):
-    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
     if request.method == 'POST':
-        form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
+        form = UserProfileForm(request.POST, request.FILES, instance=request.user.userprofile)
         if form.is_valid():
             form.save()
-            return redirect('profile')
     else:
-        form = UserProfileForm(instance=user_profile)
+        form = UserProfileForm(instance=request.user.userprofile)
 
     return render(request, 'profile.html', {'form': form})
 

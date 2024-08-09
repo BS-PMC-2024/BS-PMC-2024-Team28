@@ -13,6 +13,10 @@ from .models import CommunityMessage
 from django import forms
 from .models import CommunityMessage
 
+class CommunityMessageForm(forms.ModelForm):
+    class Meta:
+        model = CommunityMessage
+        fields = ['content', 'image']
 
 class ContactusForm(forms.ModelForm):
     class Meta:
@@ -68,8 +72,7 @@ class LoginForm(forms.Form):
     }))
 
 
-
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['bio', 'profile_picture']
+        fields = ['profile_picture', 'bio']

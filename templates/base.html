@@ -1,13 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>ConversAI</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ConversAI</title>
+  
+  <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <!-- Font Awesome CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  
+  <!-- jQuery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <!-- Bootstrap JS -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -72,7 +79,7 @@
     .navbar-inverse .navbar-nav > .active > a:hover,
     .navbar-inverse .navbar-nav > .active > a:focus {
       color: #fff;
-      background-color: #080808;
+      background-color: #808080;
     }
 
     .navbar-inverse .navbar-toggle {
@@ -111,9 +118,20 @@
     .fa-cog {
       color: #fff; /* Set the color of the settings icon to white */
     }
+
+    .fa-accessibility {
+      color: #ff0000; /* Set the color of the accessibility icon to red */
+    }
+
+    .accessibility-icon {
+      color: #ffffff; /* Set the color of the accessibility icon to red */
+      font-size: 16px; /* Adjust the font size if needed */
+    }
   </style>
 </head>
 <body>
+
+{% load static %}
 
 <nav class="navbar navbar-inverse navbar-fixed-top">
   <div class="container-fluid">
@@ -133,16 +151,22 @@
         {% if user.is_authenticated %}
         <li>
           <a href="{% url 'profile' %}" class="btn btn-nav">
-            <img src="{{ user.userprofile.profile_picture.url }}" class="navbar-profile-pic" alt="Profile Picture">
+            {% if user.userprofile.profile_picture %}
+              <img src="{{ user.userprofile.profile_picture.url }}" class="navbar-profile-pic" alt="{{ user.username }}">
+            {% else %}
+              <img src="{% static 'images/default-profile.png' %}" class="navbar-profile-pic" alt="Default Profile Picture">
+            {% endif %}
           </a>
         </li>
         <li><a href="{% url 'contactus' %}" class="btn btn-nav"><span class="glyphicon glyphicon-envelope"></span> Contact Us</a></li>
         <li><a href="{% url 'logoutuser' %}" class="btn btn-nav"><span class="glyphicon glyphicon-log-out"></span></a></li>
         <li><a href="{% url 'user_settings' %}" class="btn btn-nav"><i class="fa fa-cog" aria-hidden="true"></i></a></li>
+        <li><a href="#" class="btn btn-nav"><span class="fa fa-accessibility accessibility-icon" aria-hidden="true"></span></a></li> <!-- Updated accessibility icon -->
         {% else %}
         <li><a href="{% url 'contactus' %}" class="btn btn-nav"><span class="glyphicon glyphicon-envelope"></span> Contact Us</a></li>
         <li><a href="{% url 'signupuser' %}" class="btn btn-nav"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
         <li><a href="{% url 'loginuser' %}" class="btn btn-nav"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+        <li><a href="#" class="btn btn-nav"><span class="fa fa-accessibility accessibility-icon" aria-hidden="true"></span></a></li> <!-- Updated accessibility icon -->
         {% endif %}
       </ul>
     </div>

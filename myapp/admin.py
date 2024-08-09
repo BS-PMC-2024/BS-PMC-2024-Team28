@@ -1,6 +1,7 @@
 from django.contrib import admin
-from myapp.models import Contactus,UserProfile,CommunityMessage
+from myapp.models import Contactus,UserProfile,CommunityMessage,Chat
 
 admin.site.register(Contactus)
 admin.site.register(UserProfile)
 admin.site.register(CommunityMessage)
+# admin.site.register(Chat)

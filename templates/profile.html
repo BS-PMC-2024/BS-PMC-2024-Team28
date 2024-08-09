@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+    {% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -116,6 +117,17 @@
             color: #bbb;
             border-top: 2px solid #444;
         }
+
+        .bio-textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #444;
+            background-color: #1f1f1f;
+            color: #fff;
+            margin-bottom: 20px;
+            resize: vertical;
+        }
     </style>
 </head>
 <body>
@@ -125,7 +137,11 @@
         </header>
         <main class="profile-main">
             <div class="profile-card">
-                <img src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture" class="profile-pic">
+                {% if user.userprofile.profile_picture %}
+                    <img src="{{ user.userprofile.profile_picture.url }}" alt="Profile Picture" class="profile-pic">
+                {% else %}
+                    <img src="{% static 'images/default-profile.png' %}" alt="Default Profile Picture" class="profile-pic">
+                {% endif %}
                 <div class="profile-info">
                     <h2>{{ user.username }}</h2>
                     <p>{{ user.email }}</p>
@@ -133,6 +149,7 @@
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     {{ form.as_p }}
+                    <textarea name="bio" class="bio-textarea" placeholder="Add your bio here">{{ form.instance.bio }}</textarea>
                     <div class="profile-actions">
                         <button type="submit" class="btn">Save Changes</button>
                     </div>
@@ -145,5 +162,4 @@
     </div>
 </body>
 </html>
-
 {% endblock %}

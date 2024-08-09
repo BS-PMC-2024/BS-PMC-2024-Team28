@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+
 {% block content %}
 <!DOCTYPE html>
 <html lang="en">
@@ -91,11 +92,13 @@
 
 <div class="chat-container">
   <div class="chat-box" id="chatBox">
-    {% if default_message %}
-      <div class="chat-message api">{{ default_message }}</div>
-    {% endif %}
-    {% for message in messages %}
-      <div class="chat-message {{ message.sender }}">{{ message.content }}</div>
+    {% for chat in chats %}
+      <div class="chat-message {{ chat.role }}">
+        {{ chat.message }}
+      </div>
+      <div class="chat-message api">
+        {{ chat.response }}
+      </div>
     {% endfor %}
   </div>
   <form id="chatForm" method="POST" class="input-group">

@@ -1,112 +1,354 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="header-top-content">
-  <div>
-    <h1 class="h1-responsive font-weight-bold">Contact Us</h1>
-    <p class="text-center w-responsive mx-auto">
-      Do you have any questions? Please do not hesitate to contact us. Our team
-      will get back to you within a matter of hours to help you.
-    </p>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-md-12 mb-md-0 mb-5">
-    <form id="contact-form" name="contact-form" method="POST" enctype="multipart/form-data">
-      {% csrf_token %}
-      <div class="row">
-        <div class="col-md-6">
-          <div class="md-form mb-0">
-            <label for="name" class="">Name</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              class="form-control"
-              value="{{ form.name.value|default_if_none:'' }}"
-            />
-            {% if form.errors.name %}
-            <p class="text-danger">{{ form.errors.name }}</p>
-            {% endif %}
-          </div>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Contact Us</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
+        *
+        {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+          font-family: 'Quicksand', sans-serif;
+        }
+        body 
+        {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 100vh;
+          background: #000;
+        }
+        section 
+        {
+          position: absolute;
+          width: 100vw;
+          height: 100vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 2px;
+          flex-wrap: wrap;
+          overflow: hidden;
+        }
+        section::before 
+        {
+          content: '';
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(#000,#0f0,#000);
+          animation: animate 5s linear infinite;
+        }
+        @keyframes animate 
+        {
+          0%
+          {
+            transform: translateY(-100%);
+          }
+          100%
+          {
+            transform: translateY(100%);
+          }
+        }
+        section span 
+        {
+          position: relative;
+          display: block;
+          width: calc(6.25vw - 2px);
+          height: calc(6.25vw - 2px);
+          background: #181818;
+          z-index: 2;
+          transition: 1.5s;
+        }
+        section span:hover 
+        {
+          background: #0f0;
+          transition: 0s;
+        }
+        section .contact-us
+        {
+          position: absolute;
+          width: 400px;
+          background: #222;  
+          z-index: 1000;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 40px;
+          border-radius: 4px;
+          box-shadow: 0 15px 35px rgba(0,0,0,9);
+        }
+        section .contact-us .content 
+        {
+          position: relative;
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+          gap: 20px;
+        }
+        section .contact-us .content h2 
+        {
+          font-size: 2em;
+          color: #0f0;
+          text-transform: uppercase;
+        }
+        section .contact-us .content .form 
+        {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 15px;
+        }
+        section .contact-us .content .form .inputBox
+        {
+          position: relative;
+          width: 100%;
+        }
+        section .contact-us .content .form .inputBox input,
+        section .contact-us .content .form .inputBox select,
+        section .contact-us .content .form .inputBox textarea
+        {
+          position: relative;
+          width: 100%;
+          background: #333;
+          border: none;
+          outline: none;
+          padding: 15px;
+          border-radius: 4px;
+          color: #fff;
+          font-weight: 500;
+          font-size: 1em;
+        }
+        section .contact-us .content .form .inputBox i 
+        {
+          position: absolute;
+          left: 0;
+          padding: 15px;
+          font-style: normal;
+          color: #aaa;
+          transition: 0.5s;
+          pointer-events: none;
+        }
+        .contact-us .content .form .inputBox input:focus ~ i,
+        .contact-us .content .form .inputBox input:valid ~ i
+        {
+          transform: translateY(-7.5px);
+          font-size: 0.8em;
+          color: #fff;
+        }
+        .contact-us .content .form .links 
+        {
+          position: relative;
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+        }
+        .contact-us .content .form .links a 
+        {
+          color: #fff;
+          text-decoration: none;
+        }
+        .contact-us .content .form .links a:nth-child(2)
+        {
+          color: #0f0;
+          font-weight: 600;
+        }
+        .contact-us .content .form .inputBox input[type="submit"]
+        {
+          padding: 10px;
+          background: #0f0;
+          color: #000;
+          font-weight: 600;
+          font-size: 1.35em;
+          letter-spacing: 0.05em;
+          cursor: pointer;
+        }
+        input[type="submit"]:active
+        {
+          opacity: 0.6;
+        }
+        @media (max-width: 900px)
+        {
+          section span 
+          {
+            width: calc(10vw - 2px);
+            height: calc(10vw - 2px);
+          }
+        }
+        @media (max-width: 600px)
+        {
+          section span 
+          {
+            width: calc(20vw - 2px);
+            height: calc(20vw - 2px);
+          }
+        }
+    </style>
+</head>
+<body>
+    <section>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <div class="contact-us">
+            <div class="content">
+                <h2>Contact Us</h2>
+                <form id="contact-form" name="contact-form" method="POST" enctype="multipart/form-data" class="form">
+                    {% csrf_token %}
+                    <div class="inputBox">
+                        <input type="text" id="name" name="name" value="{{ form.name.value|default_if_none:'' }}" required>
+                        <i>Name</i>
+                    </div>
+                    <div class="inputBox">
+                        <input type="email" id="email" name="email" value="{{ form.email.value|default_if_none:'' }}" required>
+                        <i>Email</i>
+                    </div>
+                    <div class="inputBox">
+                        <input type="text" id="subject" name="subject" value="{{ form.subject.value|default_if_none:'' }}" required>
+                        <i>Subject</i>
+                    </div>
+                    <div class="inputBox">
+                        <select id="subject-dropdown" name="subject-dropdown" required>
+                            <option value="" disabled selected>Choose a Subject</option>
+                            <option value="Code inefficiency">Code inefficiency</option>
+                            <option value="Performance improvement suggestions">Performance improvement suggestions</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="inputBox">
+                        <textarea id="message" name="message" rows="5" required>{{ form.message.value|default_if_none:'' }}</textarea>
+                        <i>Message</i>
+                    </div>
+                    <div class="inputBox">
+                        <input type="file" id="image" name="image">
+                    </div>
+                    <div class="inputBox">
+                        <input type="submit" value="Send">
+                    </div>
+                    <div class="links">
+                        <a href="{% url 'chatPage' %}">Home</a>
+{#                        <a href="{% url '#' %}">Support</a>#}
+                    </div>
+                    {% if messages %}
+                        <div>
+                            {% for message in messages %}
+                                <p>{{ message }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </form>
+            </div>
         </div>
-        <div class="col-md-6">
-          <div class="md-form mb-0">
-            <label for="email" class="">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              class="form-control"
-              value="{{ form.email.value|default_if_none:'' }}"
-            />
-            {% if form.errors.email %}
-            <p class="text-danger">{{ form.errors.email }}</p>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <div class="md-form mb-0">
-            <label for="subject" class="">Subject</label>
-            <select
-              id="subject"
-              name="subject"
-              class="form-control"
-            >
-              <option value="">Choose an option</option>
-              <option value="Code inefficiency">Code inefficiency</option>
-              <option value="Performance improvement suggestions">Performance improvement suggestions</option>
-              <option value="Other">Other</option>
-            </select>
-            {% if form.errors.subject %}
-            <p class="text-danger">{{ form.errors.subject }}</p>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <div class="md-form">
-            <label for="message">Message</label>
-            <textarea
-              id="message"
-              name="message"
-              rows="2"
-              class="form-control md-textarea"
-            >{{ form.message.value|default_if_none:'' }}</textarea>
-            {% if form.errors.message %}
-            <p class="text-danger">{{ form.errors.message }}</p>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <div class="md-form">
-            <label for="image">Attach Image</label>
-            <input
-              type="file"
-              id="image"
-              name="image"
-              class="form-control"
-            />
-            {% if form.errors.image %}
-            <p class="text-danger">{{ form.errors.image }}</p>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-      <div class="text-center text-md-left mt-3">
-        <button class="btn btn-primary" type="submit">Send</button>
-      </div>
-    </form>
-    {% if message %}
-    <div class="alert {% if hasError %}alert-danger{% else %}alert-success{% endif %} mt-3">
-      {{ message }}
-    </div>
-    {% endif %}
-  </div>
-</div>
+    </section>
+</body>
+</html>
 {% endblock %}
