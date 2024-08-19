@@ -34,20 +34,65 @@ from .models import Chat
 # #     answer = response.choices[0].message['content'].strip()
 #     return answer
 
-@login_required
-def chatPage(request):
-    # chats = Chat.objects.filter(user=request.user)
-    #
-    # if request.method == 'POST':
-    #     message = request.POST.get('message')
-    #     response = ask_openai(message)
-    #
-    #     chat = Chat(user=request.user, message=message, response=response, created_at=timezone.now())
-    #     chat.save()
-    #     return JsonResponse({'message': message, 'response': response})
+def encode_image(image_file):
+    return base64.b64encode(image_file.read()).decode('utf-8')
 
+
+def ask_openai(message, base64_image=None):
+    # openai.api_key = 'sk-obSYJt7VRBNHBdKAfbgVRGYArY_m0AvloCcA2JfVBlT3BlbkFJaiMtlJi-aSit6lf3fJlztoDB4Gmhiauy6Hjbk2KRoA'
+    client = OpenAI(
+        api_key='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')
+
+    if base64_image:
+        message_content = [
+            {"type": "text", "text": f"{message}"},
+            {
+                "type": "image_url",
+                "image_url": {
+                    "url": f"data:image/jpeg;base64,{base64_image}",
+                },
+            },
+        ]
+    else:
+        message_content = message
+
+    message = {
+        "role": "user",
+        "content": message_content
+    }
+    completion = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[message]
+    )
+    print(completion.choices[0].message.content)
+
+    answer = completion.choices[0].message.content
+    return answer
+
+
+def chatPage(request):
+    if request.method == 'POST':
+        message = request.POST.get('message')
+        image = request.FILES.get('image')
+        base64_image = None
+        if image:
+            base64_image = encode_image(image)
+        print(image)
+        # base64_image = encode_image(image)
+        print(base64_image)
+        response = ask_openai(message, base64_image)
+        print(response)
+        # response_content = response['choices'][0]['message']['content']
+        chat = Chat(user=request.user, message=message, response=response, created_at=timezone.now())
+        chat.save()
+        return JsonResponse({'message': message, 'response': response})
+
+    chat_history = Chat.objects.all()
+    context = {
+        'chat_history': chat_history
+    }
     # return render(request, 'chatPage.html', {'chats': chats})
-    return render(request, 'chatPage.html', )
+    return render(request, 'chatPage.html', context)
 
 
 
