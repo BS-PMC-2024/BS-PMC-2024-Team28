@@ -94,7 +94,22 @@ def chatPage(request):
     # return render(request, 'chatPage.html', {'chats': chats})
     return render(request, 'chatPage.html', context)
 
+@login_required
+def chat_history(request):
+    user = request.user
+    chats = Chat.objects.filter(user=user).order_by('created_at')
 
+    grouped_chats = defaultdict(list)
+    for chat in chats:
+        date = chat.created_at.strftime('%Y-%m-%d')
+        grouped_chats[date].append({
+            'id': chat.id,
+            'message': chat.message,
+            'response': chat.response,
+            'created_at': chat.created_at.strftime('%Y-%m-%d %H:%M:%S')
+        })
+
+    sorted_grouped_chats = sorted(grouped_chats.items(), reverse=True)
 
 @login_required
 def logoutuser(request):
