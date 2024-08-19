@@ -25,7 +25,6 @@ class CommunityChatViewTest(TestCase):
         response = self.client.get(reverse('community_chat'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'community_chat.html')
-
 class CommunityMessageModelTest(TestCase):
 
     def setUp(self):
@@ -38,9 +37,22 @@ class CommunityMessageModelTest(TestCase):
         )
         self.assertEqual(message.user.username, 'testuser')
         self.assertEqual(message.content, "This is a test message")
-        self.assertFalse(message.image)  # Updated check
+        self.assertFalse(message.image)  # Check that image is not set
 
 class ContactusModelTest(TestCase):
+
+    def test_create_contactus(self):
+        contactus = Contactus.objects.create(
+            name="John Doe",
+            email="john@example.com",
+            subject="Test Subject",
+            message="This is a test message"
+        )
+        self.assertEqual(contactus.name, "John Doe")
+        self.assertEqual(contactus.email, "john@example.com")
+        self.assertEqual(contactus.subject, "Test Subject")
+        self.assertEqual(contactus.message, "This is a test message")
+        self.assertFalse(contactus.image)  # Check that image is not set
 
     def test_create_contactus(self):
         contactus = Contactus.objects.create(
