@@ -103,3 +103,39 @@ class ContactusViewTest(TestCase):
         self.assertEqual(response.status_code, 200)  # Renders the form again
         self.assertTrue(Contactus.objects.filter(subject='Test Subject').exists())
         self.assertContains(response, 'Message was sent successfully')
+
+class UserFlowIntegrationTest(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username='testuser', password='12345')
+        self.client.login(username='testuser', password='12345')
+
+    def test_user_signup_login_logout_flow(self):
+        # Test user signup
+        response = self.client.post(reverse('signupuser'), {
+            'username': 'newuser',
+            'email': 'newuser@example.com',
+            'password1': 'newpassword',
+            'password2': 'newpassword'
+        })
+        self.assertEqual(response.status_code, 302)  # Expect redirect after signup
+        self.assertTrue(User.objects.filter(username='newuser').exists())
+
+        # Log in with the new user
+        self.client.logout()
+        self.client.login(username='newuser', password='newpassword')
+        response = self.client.get(reverse('chatPage'))
+        self.assertEqual(response.status_code, 200)  #  user should see chat page
+
+        # Test adding a community message
+        response = self.client.post(reverse('community_chat'), {
+            'content': 'Integration test message'
+        })
+        self.assertEqual(response.status_code, 302)  # Expect redirect after post
+        self.assertTrue(CommunityMessage.objects.filter(content='Integration test message').exists())
+
+        # Test logging out
+        self.client.logout()
+        response = self.client.get(reverse('chatPage'))
+        self.assertEqual(response.status_code, 200)  # Expect redirect to login page
