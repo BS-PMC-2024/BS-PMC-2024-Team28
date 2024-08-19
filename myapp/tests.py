@@ -103,3 +103,27 @@ class ContactusViewTest(TestCase):
         self.assertEqual(response.status_code, 200)  # Renders the form again
         self.assertTrue(Contactus.objects.filter(subject='Test Subject').exists())
         self.assertContains(response, 'Message was sent successfully')
+
+
+
+
+class ContactUsFormIntegrationTest(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+
+    def test_contactus_form_submission(self):
+        response = self.client.post(reverse('contactus'), {
+            'name': 'Jane Doe',
+            'email': 'jane@example.com',
+            'subject': 'Integration Test Subject',
+            'message': 'This is an integration test message'
+        })
+        self.assertEqual(response.status_code, 200)  # Form should be rendered again
+        self.assertTrue(Contactus.objects.filter(subject='Integration Test Subject').exists())
+        self.assertContains(response, 'Message was sent successfully')
+
+
+
+
+
