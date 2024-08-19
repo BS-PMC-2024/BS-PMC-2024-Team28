@@ -26,6 +26,12 @@ class CommunityChatViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'community_chat.html')
 
+    def test_community_chat_post(self):
+        response = self.client.post(reverse('community_chat'), {
+            'content': 'Test message content'
+        })
+        self.assertEqual(response.status_code, 302)  # Expect redirect after post
+        self.assertTrue(CommunityMessage.objects.filter(content='Test message content').exists())
 class CommunityMessageModelTest(TestCase):
 
     def setUp(self):
