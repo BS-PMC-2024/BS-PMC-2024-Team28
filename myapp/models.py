@@ -16,6 +16,7 @@ from django.dispatch import receiver
 #         return f"{self.user.username} - {self.created_at}"
 
 
+
 class Chat(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     message = models.TextField()

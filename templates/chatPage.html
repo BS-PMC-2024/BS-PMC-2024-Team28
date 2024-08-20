@@ -7,150 +7,375 @@
   <title>Chat Page</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script> <!-- Markdown library -->
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #000;
+      font-family: 'Inter', sans-serif;
+      background-color: #1e1e1e;
       margin: 0;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      color: #ffffff;
+    }
+
+    .container {
+      display: flex;
+      height: 90vh;
+      width: 90%;
+      max-width: 1200px;
+      background-color: #2c2c2c;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+    }
+    .sidebar-main{
+      width: 25%;
+      background-color: #333333;
+      padding: 5px 10px;
+      text-align: center;
+    }
+    /* Sidebar */
+    .sidebar {
+      width: 100%;
+      background-color: #333333;
+      border-right: 1px solid #444444;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      overflow-y: auto;
+      text-align: left;
+    }
+
+    .sidebar h2 {
+      margin-bottom: 20px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .sidebar .history-item {
+      padding: 10px;
+      background-color: #444444;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      word-wrap: break-word;
+    }
+
+    .sidebar .history-item:hover {
+      background-color: #555555;
     }
 
     .chat-container {
-      width: 80%;
-      max-width: 800px;
-      background-color: #222;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
       padding: 20px;
     }
 
     .chat-box {
-      height: 400px;
+      flex-grow: 1;
       overflow-y: auto;
-      padding: 10px;
-      border: 1px solid #333;
-      margin-bottom: 10px;
-      border-radius: 5px;
-      background-color: #333;
+      padding: 20px;
+      background-color: #1e1e1e;
+      border-radius: 10px;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
     }
 
     .chat-message {
-      padding: 10px;
-      margin: 5px 0;
-      border-radius: 5px;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 10px;
       max-width: 75%;
+      line-height: 1.5;
+      word-wrap: break-word;
+      animation: fadeIn 0.3s ease;
     }
 
     .chat-message.user {
-      background-color: #0f0;
-      color: #000;
+      background-color: #0078d7;
+      color: #fff;
       align-self: flex-end;
     }
 
     .chat-message.api {
-      background-color: #f8d7da;
-      color: #000;
+      background-color: #444444;
+      color: #ffffff;
       align-self: flex-start;
     }
 
     .input-group {
       display: flex;
-      border-radius: 5px;
+      align-items: center;
+      background-color: #2c2c2c;
+      border-radius: 20px;
+      padding: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      margin-top: 10px;
+      flex-direction: row;
     }
 
     .input-group input {
       flex: 1;
-      padding: 10px;
-      border: 1px solid #333;
-      border-radius: 5px 0 0 5px;
+      padding: 15px;
+      border: none;
+      border-radius: 20px;
       outline: none;
-      background-color: #333;
-      color: #fff;
+      background-color: #3c3c3c;
+      color: #ffffff;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    .input-group input::placeholder {
+      color: #888888;
+    }
+
+    .upload-icon-button {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+
+    .upload-icon {
+      width: 24px;
+      height: 24px;
+      fill: white;
     }
 
     .input-group button {
-      padding: 10px 20px;
-      background-color: #0f0;
+      padding: 15px;
+      margin-left: 10px;
+      background-color: #0078d7;
       border: none;
-      color: #000;
-      border-radius: 0 5px 5px 0;
+      color: #fff;
+      border-radius: 20px;
       cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.2s;
+      font-size: 14px;
     }
 
     .input-group button:hover {
-      background-color: #45a049;
+      background-color: #005bb5;
+    }
+
+    .image-preview {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin: 5px;
+      display: none;
+    }
+    .history-date {
+      font-weight: bold;
+      margin-top: 10px;
+      margin-bottom: 5px;
+      color: #cccccc;
+  }
+  
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Customize the scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: #444444;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background-color: #1e1e1e;
     }
   </style>
 </head>
 <body>
 
-<div class="chat-container">
-  <div class="chat-box" id="chatBox">
-    {% for chat in chats %}
-      <div class="chat-message {{ chat.role }}">
-        {{ chat.message }}
-      </div>
-      <div class="chat-message api">
-        {{ chat.response }}
-      </div>
-    {% endfor %}
+<div class="container">
+  <!-- Sidebar for chat history -->
+  <div class="sidebar-main">
+    <h3>Chat History</h3>
+    <div class="sidebar" id="chatHistorySidebar">
+      
+      <!-- Chat history will be dynamically loaded here -->
+    </div>
   </div>
-  <form id="chatForm" method="POST" class="input-group">
-    {% csrf_token %}
-    <input type="text" name="message" id="chatInput" placeholder="Type a message...">
-    <button type="submit">Send</button>
-  </form>
+
+  <!-- Main Chat Area -->
+  <div class="chat-container">
+    <div class="chat-box" id="chatBox">
+      {% for chat in chats %}
+        <div class="chat-message {{ chat.role }}">
+          {{ chat.message }}
+        </div>
+        <div class="chat-message api" id="chat-{{ forloop.counter }}">
+          {{ chat.response }}
+        </div>
+      {% endfor %}
+    </div>
+  
+    <img id="imagePreview" class="image-preview" alt="Image preview">
+    
+    <form id="chatForm" method="POST" enctype="multipart/form-data" class="input-group">
+      {% csrf_token %}
+      
+      <!-- Input Field -->
+      <input type="text" name="message" id="chatInput" placeholder="Type a message..." autocomplete="off">
+      
+      <!-- Upload Button -->
+      <label for="chatImage" class="upload-icon-button">
+        <svg xmlns="http://www.w3.org/2000/svg" class="upload-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        <input type="file" name="image" id="chatImage" accept="image/*" style="display: none;">
+      </label>
+
+      <!-- Send Button -->
+      <button type="submit">Send</button>
+    </form>
+  </div>
 </div>
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const chatBox = document.getElementById('chatBox');
     chatBox.scrollTop = chatBox.scrollHeight;
-  });
 
-  document.getElementById('chatForm').addEventListener('submit', function(event) {
-    event.preventDefault();
+    const chatImageInput = document.getElementById('chatImage');
+    const imagePreview = document.getElementById('imagePreview');
 
-    const inputField = document.getElementById('chatInput');
-    const message = inputField.value.trim();
+    chatImageInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
 
-    if (message) {
-      const chatBox = document.getElementById('chatBox');
-      const userMessageDiv = document.createElement('div');
-      userMessageDiv.className = 'chat-message user';
-      userMessageDiv.textContent = message;
-      chatBox.appendChild(userMessageDiv);
+            reader.onload = function(event) {
+                imagePreview.src = event.target.result;
+                imagePreview.style.display = 'block';
+            }
 
-      inputField.value = '';
+            reader.readAsDataURL(file);
+        } else {
+            imagePreview.style.display = 'none';
+        }
+    });
 
-      fetch('{% url 'chatPage' %}', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'X-CSRFToken': '{{ csrf_token }}'
-        },
-        body: new URLSearchParams({
-          'message': message
-        })
-      })
-      .then(response => response.json())
-      .then(data => {
-        setTimeout(() => {
-          const apiMessageDiv = document.createElement('div');
-          apiMessageDiv.className = 'chat-message api';
-          apiMessageDiv.textContent = data.response;
-          chatBox.appendChild(apiMessageDiv);
-          chatBox.scrollTop = chatBox.scrollHeight;
-        }, 1000); // 1 second delay
-      });
+    document.getElementById('chatForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const inputField = document.getElementById('chatInput');
+        const imageField = document.getElementById('chatImage');
+        const image = imageField.files[0];
+        const message = inputField.value.trim();
+
+        if (message || image) {
+            // Add user message to the chat
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.className = 'chat-message user';
+            userMessageDiv.textContent = message;
+            chatBox.appendChild(userMessageDiv);
+
+            // Add image preview to the chat if an image is selected
+            if (image) {
+                const userImageDiv = document.createElement('div');
+                userImageDiv.className = 'chat-message user';
+                const imgElement = document.createElement('img');
+                imgElement.src = imagePreview.src;
+                imgElement.style.maxWidth = '100%';  // Set max width to fit within chat bubble
+                imgElement.style.borderRadius = '10px';  // Rounded corners
+                userImageDiv.appendChild(imgElement);
+                chatBox.appendChild(userImageDiv);
+            }
+
+            inputField.value = '';  // Clear the input field
+            imagePreview.style.display = 'none';  // Hide the image preview
+            imageField.value = '';  // Clear the image input field
+
+            const formData = new FormData();
+            formData.append('message', message);
+            if (image) {
+                formData.append('image', image);
+            }
+
+            fetch('{% url "chatPage" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const apiMessageDiv = document.createElement('div');
+                apiMessageDiv.className = 'chat-message api';
+                chatBox.appendChild(apiMessageDiv);
+
+                typeText(apiMessageDiv, data.response);
+                fetchChatHistory();  // Optionally update chat history
+            });
+        }
+    });
+
+    function typeText(element, text) {
+        let index = 0;
+        const tempText = document.createElement('span');
+
+        function type() {
+            if (index < text.length) {
+                tempText.textContent += text.charAt(index);
+                index++;
+                setTimeout(type, 30);
+            } else {
+                element.innerHTML = marked(text);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        }
+
+        element.appendChild(tempText);
+        type();
     }
-  });
+
+    function fetchChatHistory() {
+        fetch("{% url 'chat_history' %}")
+            .then(response => response.json())
+            .then(data => {
+                const groupedChats = data.grouped_chats; // Access the grouped chats
+                const chatHistorySidebar = document.getElementById('chatHistorySidebar');
+                chatHistorySidebar.innerHTML = ''; // Clear the sidebar
+
+                groupedChats.forEach(([date, chats]) => {
+                   // const dateHeader = document.createElement('div');
+                    //dateHeader.className = 'history-date';
+                  //  dateHeader.textContent = date;
+                   // chatHistorySidebar.appendChild(dateHeader);
+
+                    chats.forEach(item => {  // Reverse the order of chats within each date
+                        const historyItem = document.createElement('div');
+                        historyItem.className = 'history-item';
+                        historyItem.textContent = item.message;
+                        chatHistorySidebar.prepend(historyItem); // Prepend each item
+                    });
+                });
+            })
+            .catch(error => console.error('Error fetching chat history:', error));
+    }
+
+    // Refresh chat history every 10 seconds
+    setInterval(fetchChatHistory, 10000);
+    fetchChatHistory();
+});
+
+
 </script>
 
 </body>

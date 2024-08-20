@@ -5,4 +5,5 @@ from myapp.models import Contactus,UserProfile
 admin.site.register(Contactus)
 admin.site.register(UserProfile)
 admin.site.register(CommunityMessage)
+admin.site.register(Chat)
 # admin.site.register(Chat)
