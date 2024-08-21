@@ -53,7 +53,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'alobraessa2212@gmail.com'
 EMAIL_HOST_PASSWORD = '123'
 
-CHAT_API_KEY = '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'
+CHAT_API_KEY = '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'
 TEMPLATES = [
     {
         # ...

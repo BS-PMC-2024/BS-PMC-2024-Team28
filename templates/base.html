@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ConversAI</title>
-  
+
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <!-- Font Awesome CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  
+
   <!-- jQuery -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <!-- Bootstrap JS -->
@@ -119,13 +119,57 @@
       color: #fff; /* Set the color of the settings icon to white */
     }
 
-    .fa-accessibility {
-      color: #ff0000; /* Set the color of the accessibility icon to red */
+    .accessibility-icon {
+      color: #ffffff; /* Set the color of the accessibility icon to white */
+      font-size: 16px; /* Adjust the font size if needed */
     }
 
-    .accessibility-icon {
-      color: #ffffff; /* Set the color of the accessibility icon to red */
-      font-size: 16px; /* Adjust the font size if needed */
+    /* Sidebar styles */
+    .accessibility-sidebar {
+      height: 100%; /* 100% Full-height */
+      width: 0; /* 0 width - change this with JavaScript */
+      position: fixed; /* Stay in place */
+      z-index: 1; /* Stay on top */
+      top: 0;
+      right: 0; /* Stay on right side */
+      background-color: rgba(108, 7, 7, 0.5); /* Black*/
+      overflow-x: hidden; /* Disable horizontal scroll */
+      padding-top: 60px; /* Place content 60px from the top */
+      transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
+    }
+
+    .accessibility-sidebar a {
+      padding: 8px 8px 8px 32px;
+      text-decoration: none;
+      font-size: 25px;
+      color: #ddd;
+      display: block;
+      transition: 0.3s;
+    }
+
+    .accessibility-sidebar a:hover {
+      color: #fff;
+    }
+
+    .accessibility-sidebar .closebtn {
+      position: absolute;
+      top: 0;
+      right: 25px;
+      font-size: 36px;
+      margin-left: 0;
+    }
+
+    .openbtn {
+      font-size: 20px;
+      cursor: pointer;
+      background-color: #3d47b6;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+    }
+
+    .openbtn:hover {
+      background-color: #3d47b6;
     }
   </style>
 </head>
@@ -161,20 +205,210 @@
         <li><a href="{% url 'contactus' %}" class="btn btn-nav"><span class="glyphicon glyphicon-envelope"></span> Contact Us</a></li>
         <li><a href="{% url 'logoutuser' %}" class="btn btn-nav"><span class="glyphicon glyphicon-log-out"></span></a></li>
         <li><a href="{% url 'user_settings' %}" class="btn btn-nav"><i class="fa fa-cog" aria-hidden="true"></i></a></li>
-        <li><a href="#" class="btn btn-nav"><span class="fa fa-accessibility accessibility-icon" aria-hidden="true"></span></a></li> <!-- Updated accessibility icon -->
+        <li><a href="javascript:void(0)" class="btn btn-nav" onclick="openNav()"><span class="fa fa-universal-access accessibility-icon" aria-hidden="true"></span></a></li> <!-- Updated accessibility icon -->
         {% else %}
         <li><a href="{% url 'contactus' %}" class="btn btn-nav"><span class="glyphicon glyphicon-envelope"></span> Contact Us</a></li>
         <li><a href="{% url 'signupuser' %}" class="btn btn-nav"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
         <li><a href="{% url 'loginuser' %}" class="btn btn-nav"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-        <li><a href="#" class="btn btn-nav"><span class="fa fa-accessibility accessibility-icon" aria-hidden="true"></span></a></li> <!-- Updated accessibility icon -->
         {% endif %}
       </ul>
     </div>
   </div>
 </nav>
 
+
+<script>
+function openNav() {
+  document.getElementById("accessibilitySidebar").style.width = "250px";
+}
+
+function closeNav() {
+  document.getElementById("accessibilitySidebar").style.width = "0";
+}
+</script>
+
 {% block content %}
 {% endblock %}
 
 </body>
 </html>
+{#<!DOCTYPE html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#  <meta charset="utf-8">#}
+{#  <meta name="viewport" content="width=device-width, initial-scale=1">#}
+{#  <title>ConversAI</title>#}
+{#  #}
+{#  <!-- Bootstrap CSS -->#}
+{#  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">#}
+{#  <!-- Font Awesome CSS -->#}
+{#  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">#}
+{#  #}
+{#  <!-- jQuery -->#}
+{#  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>#}
+{#  <!-- Bootstrap JS -->#}
+{#  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>#}
+{##}
+{#  <style>#}
+{#    body {#}
+{#      font-family: Arial, sans-serif;#}
+{#      background-color: #000;#}
+{#      color: #fff;#}
+{#      padding-top: 70px; /* Adjust padding for fixed navbar */#}
+{#    }#}
+{##}
+{#    .navbar-inverse {#}
+{#      background-color: #222;#}
+{#      border-color: #080808;#}
+{#      border-radius: 0; /* Remove border radius */#}
+{#      margin-bottom: 0; /* Remove margin bottom */#}
+{#    }#}
+{##}
+{#    .navbar-inverse .navbar-brand {#}
+{#      color: #0f0;#}
+{#    }#}
+{##}
+{#    .navbar-inverse .navbar-brand:hover,#}
+{#    .navbar-inverse .navbar-brand:focus {#}
+{#      color: #45a049;#}
+{#    }#}
+{##}
+{#    .navbar-inverse .navbar-nav > li > a {#}
+{#      color: #ddd;#}
+{#    }#}
+{##}
+{#    .navbar-inverse .navbar-nav > li > a:hover,#}
+{#    .navbar-inverse .navbar-nav > li > a:focus {#}
+{#      color: #fff;#}
+{#      background-color: transparent;#}
+{#    }#}
+{##}
+{#    .navbar-inverse .navbar-nav .dropdown-menu {#}
+{#      background-color: #333;#}
+{#      border-color: #222;#}
+{#    }#}
+{##}
+{#    .navbar-inverse .navbar-nav .dropdown-menu > li > a {#}
+{#      color: #ddd;#}
+{#    }#}
+{##}
+{#    .navbar-inverse .navbar-nav .dropdown-menu > li > a:hover,#}
+{#    .navbar-inverse .navbar-nav .dropdown-menu > li > a:focus {#}
+{#      color: #fff;#}
+{#      background-color: #444;#}
+{#    }#}
+{##}
+{#    .navbar-inverse .navbar-nav > .dropdown > a .caret {#}
+{#      border-top-color: #ddd;#}
+{#      border-bottom-color: #ddd;#}
+{#    }#}
+{##}
+{#    .navbar-inverse .navbar-nav > .dropdown > a:hover .caret,#}
+{#    .navbar-inverse .navbar-nav > .dropdown > a:focus .caret {#}
+{#      border-top-color: #fff;#}
+{#      border-bottom-color: #fff;#}
+{#    }#}
+{##}
+{#    .navbar-inverse .navbar-nav > .active > a,#}
+{#    .navbar-inverse .navbar-nav > .active > a:hover,#}
+{#    .navbar-inverse .navbar-nav > .active > a:focus {#}
+{#      color: #fff;#}
+{#      background-color: #808080;#}
+{#    }#}
+{##}
+{#    .navbar-inverse .navbar-toggle {#}
+{#      border-color: #333;#}
+{#    }#}
+{##}
+{#    .navbar-inverse .navbar-toggle .icon-bar {#}
+{#      background-color: #fff;#}
+{#    }#}
+{##}
+{#    .navbar-inverse .navbar-right > li > a {#}
+{#      color: #ddd;#}
+{#    }#}
+{##}
+{#    .navbar-inverse .navbar-right > li > a:hover,#}
+{#    .navbar-inverse .navbar-right > li > a:focus {#}
+{#      color: #fff;#}
+{#      background-color: transparent;#}
+{#    }#}
+{##}
+{#    .navbar-inverse .navbar-right > li > .glyphicon {#}
+{#      margin-right: 5px;#}
+{#    }#}
+{##}
+{#    .btn-nav {#}
+{#      margin-top: 10px;#}
+{#      margin-right: 15px;#}
+{#    }#}
+{##}
+{#    .navbar-profile-pic {#}
+{#      width: 30px;#}
+{#      height: 30px;#}
+{#      border-radius: 50%;#}
+{#    }#}
+{##}
+{#    .fa-cog {#}
+{#      color: #fff; /* Set the color of the settings icon to white */#}
+{#    }#}
+{##}
+{#    .fa-accessibility {#}
+{#      color: #ff0000; /* Set the color of the accessibility icon to red */#}
+{#    }#}
+{##}
+{#    .accessibility-icon {#}
+{#      color: #ff0000; /* Set the color of the accessibility icon to red */#}
+{#      font-size: 16px; /* Adjust the font size if needed */#}
+{#    }#}
+{#  </style>#}
+{#</head>#}
+{#<body>#}
+{##}
+{#{% load static %}#}
+{##}
+{#<nav class="navbar navbar-inverse navbar-fixed-top">#}
+{#  <div class="container-fluid">#}
+{#    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">#}
+{#      <span class="icon-bar"></span>#}
+{#      <span class="icon-bar"></span>#}
+{#      <span class="icon-bar"></span>#}
+{#    </button>#}
+{#    <a class="navbar-brand" href="{% url 'chatPage' %}">ConversAI</a>#}
+{#    <div class="collapse navbar-collapse" id="myNavbar">#}
+{#      <ul class="nav navbar-nav">#}
+{#        {% if user.is_authenticated %}#}
+{#        <li><a href="{% url 'community_chat' %}" class="btn btn-primary">Community</a></li>#}
+{#        {% endif %}#}
+{#      </ul>#}
+{#      <ul class="nav navbar-nav navbar-right">#}
+{#        {% if user.is_authenticated %}#}
+{#        <li>#}
+{#          <a href="{% url 'profile' %}" class="btn btn-nav">#}
+{#            {% if user.userprofile.profile_picture %}#}
+{#              <img src="{{ user.userprofile.profile_picture.url }}" class="navbar-profile-pic" alt="{{ user.username }}">#}
+{#            {% else %}#}
+{#              <img src="{% static 'images/default-profile.png' %}" class="navbar-profile-pic" alt="Default Profile Picture">#}
+{#            {% endif %}#}
+{#          </a>#}
+{#        </li>#}
+{#        <li><a href="{% url 'contactus' %}" class="btn btn-nav"><span class="glyphicon glyphicon-envelope"></span> Contact Us</a></li>#}
+{#        <li><a href="{% url 'logoutuser' %}" class="btn btn-nav"><span class="glyphicon glyphicon-log-out"></span></a></li>#}
+{#        <li><a href="{% url 'user_settings' %}" class="btn btn-nav"><i class="fa fa-cog" aria-hidden="true"></i></a></li>#}
+{#        <li><a href="#" class="btn btn-nav"><span class="fa fa-accessibility accessibility-icon" aria-hidden="true"></span></a></li> <!-- Updated accessibility icon -->#}
+{#        {% else %}#}
+{#        <li><a href="{% url 'contactus' %}" class="btn btn-nav"><span class="glyphicon glyphicon-envelope"></span> Contact Us</a></li>#}
+{#        <li><a href="{% url 'signupuser' %}" class="btn btn-nav"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>#}
+{#        <li><a href="{% url 'loginuser' %}" class="btn btn-nav"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>#}
+{#        <li><a href="#" class="btn btn-nav"><span class="fa fa-accessibility accessibility-icon" aria-hidden="true"></span></a></li> <!-- Updated accessibility icon -->#}
+{#        {% endif %}#}
+{#      </ul>#}
+{#    </div>#}
+{#  </div>#}
+{#</nav>#}
+{##}
+{#{% block content %}#}
+{#{% endblock %}#}
+{##}
+{#</body>#}
+{#</html>#}
